@@ -29,7 +29,7 @@ public class MyApp
 	    String delimiter = "\t";
 	    String line;
 	    input = new BufferedReader(new FileReader(filename));
-	    int counter = 1;
+	    int counter = 0;
 	    String initialString = "insert into " + tableName + " (name, status, registerDate, cancelDate, renewDate,"
         		+ "stateNumber, state, abn) values ";
 	    StringBuilder command = new StringBuilder(initialString);
@@ -54,6 +54,7 @@ public class MyApp
 	    	}
 	    	
 	    	command.append("('" +tokens[1]+"','"+tokens[2]+"',"+tokens[3]+","+tokens[4]+","+tokens[5]+",'"+tokens[6]+"','"+tokens[7]+"','"+tokens[8]+"')");
+	    	counter++;
 	    	if (counter % 100 == 0 )
 	    	{
 	    		sendToDatabase(command.toString());
@@ -63,17 +64,18 @@ public class MyApp
 	    		command.append(",");
 	    	}
 	    	
-	    	counter++;
+	    	
 	    	if(counter % 50000 == 0) {
-	    	System.out.println("Added " + counter + " records!");
-	    	Instant end = Instant.now();
-	    	System.out.println("Time taken: "+ Duration.between(start, end).getSeconds() +" seconds");
+	    		printInfo(counter, start);
 	    	}
 	    }
-	    command.setLength(command.length() - 1);
-	    sendToDatabase(command.toString());
+	    if (counter % 100 != 0)
+	    {
+		    command.setLength(command.length() - 1);
+		    sendToDatabase(command.toString());
+	    }
 	    
-	    System.out.println("Added " + counter + " records!");
+	    printInfo(counter, start);
 	    shutdown();
 	    input.close();
     }
@@ -115,6 +117,12 @@ public class MyApp
 		}
     }
     
+    private static void printInfo(int records, Instant startTime) 
+    {
+    	System.out.println("Added " + records + " records!");
+    	Instant end = Instant.now();
+    	System.out.println("Time taken: "+ Duration.between(startTime, end).getSeconds() +" seconds");
+    }
 
     
     private static void shutdown()
