@@ -1,0 +1,1 @@
+mongoimport --db MyDB --collection business --type tsv --columnsHaveTypes ----fieldFile fieldsFile.txt --file text.csv
