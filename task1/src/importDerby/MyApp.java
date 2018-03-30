@@ -76,6 +76,7 @@ public class MyApp
 	    }
 	    
 	    printInfo(counter, start);
+	    System.out.println("Import finished successfully.");
 	    shutdown();
 	    input.close();
     }
@@ -91,6 +92,7 @@ public class MyApp
         catch (Exception except)
         {
             except.printStackTrace();
+            System.err.println("Failed to create connection!");
         }
     }
     
@@ -103,6 +105,7 @@ public class MyApp
 		catch (SQLException sqlExcept)
         {
             sqlExcept.printStackTrace();
+            System.err.println("Failed to create database!");
         }
 
     }
@@ -141,7 +144,7 @@ public class MyApp
         }
         catch (SQLException sqlExcept)
         {
-            
+            System.err.println("Failed to close the connection!");
         }
 
     }
