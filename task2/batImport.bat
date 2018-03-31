@@ -1,0 +1,1 @@
+mongoimport --db MyDB --collection business --type tsv --columnsHaveTypes --headerline --file dataset.csv --ignoreBlanks
