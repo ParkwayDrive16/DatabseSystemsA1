@@ -15,7 +15,20 @@ public class MyApp
 	private static String driver = "org.apache.derby.jdbc.ClientDriver";
 	private static String dbName = "MyDB";
 	private static String connectionURL = "jdbc:derby:" + dbName + ";create=true";
-	private static String createString = "create table businessNames (id integer not null generated always as identity (start with 1, increment by 1), name varchar(200) not null, status varchar(20) not null, registerDate date, cancelDate date, renewDate date, stateNumber varchar(10), state varchar(3), abn varchar(20), primary key(id))";
+	private static String createBusiness = "create table businessNames (" + 
+			"id integer not null, " + 
+			"name varchar(200) not null, " + 
+			"status varchar(20) not null, " + 
+			"registerDate date, " + 
+			"cancelDate date, " + 
+			"renewDate date, " + 
+			"stateNumber varchar(10), " + 
+			"state varchar(3), " +
+			"primary key(id))";
+	private static String createABN = "create table abns (" + 
+			"businessId int not null references businessNames(id), " + 
+			"abn varchar(20) not null, " + 
+			"primary key(businessId, abn))";
 	private static String tableName = "BusinessNames";
     // jdbc Connection
     private static Connection conn = null;
@@ -29,10 +42,13 @@ public class MyApp
 	    String delimiter = "\t";
 	    String line;
 	    input = new BufferedReader(new FileReader(filename));
-	    int counter = 0;
-	    String initialString = "insert into " + tableName + " (name, status, registerDate, cancelDate, renewDate,"
-        		+ "stateNumber, state, abn) values ";
-	    StringBuilder command = new StringBuilder(initialString);
+	    int globalCounter = 0;
+	    int abnCounter = 0;
+	    String initialUpdateBN = "insert into " + tableName + " (id, name, status, registerDate, cancelDate, renewDate,"
+        		+ "stateNumber, state) values ";
+	    String initialUpdateABN = "insert into abns (businessId, abn) values ";
+	    StringBuilder commandForBusiness = new StringBuilder(initialUpdateBN);
+	    StringBuilder commandForABN = new StringBuilder(initialUpdateABN);
 	    
 	    createConnection();
 	    createDatabase();
@@ -42,8 +58,10 @@ public class MyApp
 	    line = input.readLine();
 	    
 	    while ((line = input.readLine()) != null) {
+	    	globalCounter++;
 	    	tokens = line.split(delimiter, -1);
 	    	tokens[1] = tokens[1].replaceAll("'", "''");
+	    	
 	    	for (int i = 0; i < 3; i++) {
 	    		if(tokens[i+3].equals("")) {
 	    			tokens[i+3] = null;
@@ -53,29 +71,49 @@ public class MyApp
 	    		}
 	    	}
 	    	
-	    	command.append("('" +tokens[1]+"','"+tokens[2]+"',"+tokens[3]+","+tokens[4]+","+tokens[5]+",'"+tokens[6]+"','"+tokens[7]+"','"+tokens[8]+"')");
-	    	counter++;
-	    	if (counter % 100 == 0 )
+	    	commandForBusiness.append("("+globalCounter+",'" +tokens[1]+"','"+tokens[2]+"',"+tokens[3]+","+tokens[4]+","+tokens[5]+",'"+tokens[6]+"','"+tokens[7]+"'),");
+	    	if (!tokens[8].equals("")) {
+	    		commandForABN.append("(" + globalCounter +",'" + tokens[8] + "'),");
+	    		abnCounter++;
+	    	}
+	    	
+	    	if (globalCounter % 100 == 0 )
 	    	{
-	    		sendToDatabase(command.toString());
-	    		command.setLength(0);
-	    		command.append(initialString);
-	    	} else {
-	    		command.append(",");
+	    		commandForBusiness.setLength(commandForBusiness.length() - 1);
+//	    		System.out.println(commandForBusiness.toString());
+	    		sendToDatabase(commandForBusiness.toString());	    		
+	    		commandForBusiness.setLength(0);
+	    		commandForBusiness.append(initialUpdateBN);
+	    		if (abnCounter != 0) {
+	    			commandForABN.setLength(commandForABN.length() - 1);
+	    			sendToDatabase(commandForABN.toString());
+//	    			System.out.println(commandForABN.toString());
+	    			commandForABN.setLength(0);
+		    		commandForABN.append(initialUpdateABN);
+		    		abnCounter = 0;
+	    		}
 	    	}
 	    	
 	    	
-	    	if(counter % 50000 == 0) {
-	    		printInfo(counter, start);
+	    	if(globalCounter % 50000 == 0) {
+	    		printInfo(globalCounter, start);
 	    	}
-	    }
-	    if (counter % 100 != 0)
-	    {
-		    command.setLength(command.length() - 1);
-		    sendToDatabase(command.toString());
 	    }
 	    
-	    printInfo(counter, start);
+	    if (globalCounter % 100 != 0)
+	    {
+	    	commandForBusiness.setLength(commandForBusiness.length() - 1);
+//	    	System.out.println(commandForBusiness);
+		    sendToDatabase(commandForBusiness.toString());
+	    	if (abnCounter != 0) {
+	    		commandForABN.setLength(commandForABN.length() - 1);
+//		    	System.out.println(commandForABN.toString());
+			    sendToDatabase(commandForABN.toString());
+	    	}
+	    }
+	    
+	    conn.commit();
+	    printInfo(globalCounter, start);
 	    System.out.println("Import finished successfully.");
 	    shutdown();
 	    input.close();
@@ -87,7 +125,8 @@ public class MyApp
         {
             Class.forName(driver);
             //Get a connection
-            conn = DriverManager.getConnection(connectionURL); 
+            conn = DriverManager.getConnection(connectionURL);
+            conn.setAutoCommit(false);
         }
         catch (Exception except)
         {
@@ -100,7 +139,8 @@ public class MyApp
     {
     	try {
     		stmt = conn.createStatement();
-			stmt.executeUpdate(createString);
+			stmt.executeUpdate(createBusiness);
+			stmt.executeUpdate(createABN);
     	}
 		catch (SQLException sqlExcept)
         {
@@ -138,7 +178,6 @@ public class MyApp
             }
             if (conn != null)
             {
-                DriverManager.getConnection(connectionURL + ";shutdown=true");
                 conn.close();
             }           
         }
