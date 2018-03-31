@@ -1,1 +1,6 @@
-mongoimport --db MyDB --collection business --type tsv --columnsHaveTypes ----fieldFile fieldsFile.txt --file text.csv
+mongoimport --db MyDB --collection business --type tsv --columnsHaveTypes --headerline --file text10.csv --ignoreBlanks
+
+Mongo
+1. change the header line: field names, add field types
+2. import the data
+3. delete first field for all the records db.example.update({}, {$unset: {words:1}}, false, true);
