@@ -29,7 +29,7 @@ public class dbload
 	    	pageSize = 4096;
 	    }
 	    
-	    outputFile = "heap." + Integer.toString(pageSize);
+	    outputFile = "../heap." + Integer.toString(pageSize);
 	    input = new BufferedReader(new FileReader(inputFile));
 	    FileOutputStream fos = new FileOutputStream(outputFile);
 	    int idCounter = 0;
@@ -47,8 +47,8 @@ public class dbload
 	    while ((line = input.readLine()) != null) {
 	    	tokens = line.split(delimiter, -1);
 	    	
-	    	byte[] idBytes = intToByteArray(idCounter);
-		    byte[] nameLength = intToByteArray(tokens[1].length());
+	    	byte[] idBytes = Util.intToByteArray(idCounter);
+		    byte[] nameLength = Util.intToByteArray(tokens[1].length());
 		    byte[] name = tokens[1].getBytes();
 		    byte[] registr = { (byte) (isRegistered(tokens[2]))};
 		    
@@ -59,7 +59,7 @@ public class dbload
 		    	}
 		    } else {
 		    	Date reg = df.parse(tokens[3]);
-		    	regDate = longToByteArray(reg.getTime());
+		    	regDate = Util.longToByteArray(reg.getTime());
 		    }
 		    
 		    byte[] canDate = new byte[8];
@@ -69,7 +69,7 @@ public class dbload
 		    	}
 		    } else {
 		    	Date can = df.parse(tokens[4]);
-		    	canDate = longToByteArray(can.getTime());
+		    	canDate = Util.longToByteArray(can.getTime());
 		    }
 		    
 		    byte[] renewDate = new byte[8];
@@ -79,10 +79,10 @@ public class dbload
 		    	}
 		    } else {
 		    	Date ren = df.parse(tokens[5]);
-		    	renewDate = longToByteArray(ren.getTime());
+		    	renewDate = Util.longToByteArray(ren.getTime());
 		    }
 		    
-		    byte[] stateNumLength = intToByteArray(tokens[6].length());
+		    byte[] stateNumLength = Util.intToByteArray(tokens[6].length());
 		    byte[] stateNum = tokens[6].getBytes();
 		    byte[] rawState = tokens[7].getBytes();
 		    byte[] state = new byte[3];
@@ -99,7 +99,7 @@ public class dbload
 		    	state = rawState;
 		    }
 		    
-		    byte[] abnLength = intToByteArray(tokens[8].length());
+		    byte[] abnLength = Util.intToByteArray(tokens[8].length());
 		    byte[] abn = tokens[8].getBytes();
 		    
 	    	byte[] record = concat(idBytes, nameLength, name, registr, regDate, 
@@ -114,7 +114,7 @@ public class dbload
 	    		numOfRecordsPerPage++;
 	    	} else {
 	    		try{
-	    			numOfRecordsPerPageByte = intToByteArray(numOfRecordsPerPage);
+	    			numOfRecordsPerPageByte = Util.intToByteArray(numOfRecordsPerPage);
 	    			for(int i = 0; i < 3; i++) {
 	    				page[4093+i] = numOfRecordsPerPageByte[i];
 	    			}
@@ -132,33 +132,6 @@ public class dbload
 	    input.close();
     }
     
-    public static String byteArrayToHex(byte[] a) {
-    	   StringBuilder sb = new StringBuilder(a.length * 2);
-    	   for(byte b: a)
-    	      sb.append(String.format("%02x ", b));
-    	   return sb.toString();
-    	}
-    
-    public static final byte[] intToByteArray(int value) {
-        return new byte[] {
-                (byte)(value >>> 24),
-                (byte)(value >>> 16),
-                (byte)(value >>> 8),
-                (byte)value};
-    }
-    
-    public static byte[] longToByteArray(long value) {
-        return new byte[] {
-            (byte) (value >> 56),
-            (byte) (value >> 48),
-            (byte) (value >> 40),
-            (byte) (value >> 32),
-            (byte) (value >> 24),
-            (byte) (value >> 16),
-            (byte) (value >> 8),
-            (byte) value
-        };
-    }
     
     public static byte[] concat(byte[]...arrays)
     {
@@ -190,15 +163,4 @@ public class dbload
     	}
     }
     
-//    public static byte[] dateToByte(String dateString) {
-//    	byte[] result = new byte[8];
-//    	
-//    	if(dateString.equals("")) {
-//    		for(int i = 0; i < 8; i++) {
-//    			result[i] = (byte) 0;
-//    		} else {
-//    			Date date = df.parse(dateString);
-//    		}
-//    	}
-//    }
 }
