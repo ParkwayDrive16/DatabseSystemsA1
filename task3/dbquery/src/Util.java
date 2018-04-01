@@ -1,12 +1,5 @@
-import java.nio.ByteBuffer;
 
 public class Util {
-    public static String byteArrayToHex(byte[] a) {
- 	   StringBuilder sb = new StringBuilder(a.length * 2);
- 	   for(byte b: a)
- 	      sb.append(String.format("%02x ", b));
- 	   return sb.toString();
- 	}
  
 	 public static final byte[] intToByteArray(int value) {
 	     return new byte[] {
@@ -27,10 +20,5 @@ public class Util {
 	         (byte) (value >> 8),
 	         (byte) value
 	     };
-	 }
-	 
-	 public static int toInt(byte[] bytes)
-	 {
-	     return ByteBuffer.wrap(bytes).getInt();
 	 }
 }

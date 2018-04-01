@@ -45,6 +45,7 @@ public class dbload
 	    line = input.readLine();
 	    
 	    while ((line = input.readLine()) != null) {
+
 	    	tokens = line.split(delimiter, -1);
 	    	
 	    	byte[] idBytes = Util.intToByteArray(idCounter);
@@ -104,7 +105,7 @@ public class dbload
 		    
 	    	byte[] record = concat(idBytes, nameLength, name, registr, regDate, 
 	    			canDate, renewDate, stateNumLength, stateNum, state, abnLength, abn);
-		    
+	    	
 	    	if(freeSpace - record.length > 0) {
 	    		for(int i = 0; i < record.length; i++) {
 	    			page[i + pagePointer] = record[i];
@@ -115,19 +116,38 @@ public class dbload
 	    	} else {
 	    		try{
 	    			numOfRecordsPerPageByte = Util.intToByteArray(numOfRecordsPerPage);
-	    			for(int i = 0; i < 3; i++) {
-	    				page[4093+i] = numOfRecordsPerPageByte[i];
+	    			for(int i = 0; i < 4; i++) {
+	    				page[4092+i] = numOfRecordsPerPageByte[i];
 	    			}
 	    			fos.write(page);
+	    			page = new byte[pageSize];
 	    			pagePointer = 0;
 	    			numOfRecordsPerPage = 0;
 	    			freeSpace = pageSize - 4;
+	    			
+	    			for(int i = 0; i < record.length; i++) {
+		    			page[i + pagePointer] = record[i];
+		    		}
+		    		freeSpace -= record.length;
+		    		pagePointer += record.length;
+		    		numOfRecordsPerPage++;
 	    		} catch (IOException ioe) {
 	    		    ioe.printStackTrace();
 	    		}
 	    	}
 	    	idCounter++;
 	    }
+	    
+	    try{
+	    	numOfRecordsPerPageByte = Util.intToByteArray(numOfRecordsPerPage);
+			for(int i = 0; i < 4; i++) {
+				page[4092+i] = numOfRecordsPerPageByte[i];
+			}
+			fos.write(page);
+		} catch (IOException ioe) {
+		    ioe.printStackTrace();
+		}
+	    
 	    fos.close();
 	    input.close();
     }
