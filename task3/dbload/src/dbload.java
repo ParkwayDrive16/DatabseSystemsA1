@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,10 +14,21 @@ public class dbload
 	    String inputFile;
 	    String outputFile;
 	    //if arguments contain '-p' then use given page size and input file
-	    int pageSize;
+	    int pageSize = 0;
 	    if(args.length != 0 && args[0].equals("-p")) {
-	    	inputFile = args[1];
-	    	pageSize = Integer.parseInt(args[2]);
+	    	if(Util.isInteger(args[1]) && Integer.parseInt(args[1]) > 0) {
+	    		pageSize = Integer.parseInt(args[1]);
+	    	} else {
+	    		System.out.println("Invalid page size. Using default: 4096");
+	    		pageSize = 4096;
+	    	}
+	    	if(new File(args[2]).exists()) {
+	    		inputFile = args[2];
+	    	}
+	    	else {
+	    		System.out.println("Provided file doesn't exist. Using default: dataset.csv");
+	    		inputFile = "dataset.csv";
+	    	}
 	    } else {
 	    	//Otherwise use default values
 	    	inputFile = "dataset.csv";
@@ -27,18 +39,25 @@ public class dbload
 	    BufferedReader input = new BufferedReader(new FileReader(inputFile));
 	    FileOutputStream fos = new FileOutputStream(outputFile);
 	    
+	    //informative messages
+	    System.out.println("Page size: \t\t" + pageSize);
+	    System.out.println("Input file: \t\t" + inputFile);
+	    System.out.println("Output file: \t\t" + outputFile.substring(outputFile.length() - 9, outputFile.length()));
 	    //variables to process each line of input file
 	    String line;
 	    String[] tokens = new String[9];
 	    String delimiter = "\t";
 	    //variables to help with page processing
 	    int idCounter = 0;
+	    int pageCounter = 0;
 	    int numOfRecordsPerPage = 0;
 	    int freeSpace = pageSize - 4;
 	    int pagePointer = 0;
 	    //creating page variable with the size given
 	    byte[] page = new byte[pageSize];
 	    byte[] numOfRecordsPerPageByte = new byte[4];
+	    
+	    long start = System.currentTimeMillis();
 	    //reading and skipping the header
 	    line = input.readLine();	    
 	    while ((line = input.readLine()) != null) {
@@ -78,10 +97,11 @@ public class dbload
 	    			//writing number of records in bytes to the end of the page
 	    			numOfRecordsPerPageByte = Util.intToByteArray(numOfRecordsPerPage);
 	    			for(int i = 0; i < 4; i++) {
-	    				page[4092+i] = numOfRecordsPerPageByte[i];
+	    				page[pageSize-4+i] = numOfRecordsPerPageByte[i];
 	    			}
 	    			//writing the page to the file
 	    			fos.write(page);
+	    			pageCounter++;
 	    			//creating new page, updating pointer to the start of the page, 
 	    			//reseting free space variable and number of records in the page
 	    			page = new byte[pageSize];
@@ -109,10 +129,11 @@ public class dbload
 	    		//writing number of records in bytes to the end of the page
 		    	numOfRecordsPerPageByte = Util.intToByteArray(numOfRecordsPerPage);
 				for(int i = 0; i < 4; i++) {
-					page[4092+i] = numOfRecordsPerPageByte[i];
+					page[pageSize-4+i] = numOfRecordsPerPageByte[i];
 				}
 				//writing last page to the file
 				fos.write(page);
+				pageCounter++;
 			} catch (IOException ioe) {
 			    ioe.printStackTrace();
 			}
@@ -121,6 +142,10 @@ public class dbload
 	    //closing stream and buffer
 	    fos.close();
 	    input.close();
+	    long end = System.currentTimeMillis();
+	    System.out.println("\nRecords loaded:\t\t" + idCounter);
+	    System.out.println("Pages used: \t\t" + pageCounter);
+	    System.out.print("Execution time: \t" + (end - start) + " milliseconds.");
     }
     
 }
