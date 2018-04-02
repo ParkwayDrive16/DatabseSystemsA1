@@ -3,6 +3,6 @@ mongoimport --db MyDB --collection business --type tsv --columnsHaveTypes --head
 Mongo
 1. change the header line: field names, add field types
 2. import the data
-3. delete first field for all the records db.business.update({}, {$unset: {words:1}}, false, true);
+3. delete first field for all the records db.business.update({}, {$unset: {REGISTER_NAME:1}}, false, true);
 
 REGISTER_NAME.string()	BN_NAME.string()	BN_STATUS.string()	BN_REG_DT.date_ms(dd/MM/yyyy)	BN_CANCEL_DT.date_ms(dd/MM/yyyy)	BN_RENEW_DT.date_ms(dd/MM/yyyy)	BN_STATE_NUM.string()	BN_STATE_OF_REG.string()	BN_ABN.string()
