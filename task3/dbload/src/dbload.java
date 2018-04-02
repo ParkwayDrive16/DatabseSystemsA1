@@ -13,7 +13,7 @@ public class dbload
     	//Creating input and output file names
 	    String inputFile;
 	    String outputFile;
-	    //if arguments contain '-p' then use given page size and input file
+	    //if arguments contain '-p' then use given page size and input file + checks validity
 	    int pageSize = 0;
 	    if(args.length != 0 && args[0].equals("-p")) {
 	    	if(Util.isInteger(args[1]) && Integer.parseInt(args[1]) > 0) {
@@ -56,7 +56,7 @@ public class dbload
 	    //creating page variable with the size given
 	    byte[] page = new byte[pageSize];
 	    byte[] numOfRecordsPerPageByte = new byte[4];
-	    
+	    //record the start time of the app
 	    long start = System.currentTimeMillis();
 	    //reading and skipping the header
 	    line = input.readLine();	    

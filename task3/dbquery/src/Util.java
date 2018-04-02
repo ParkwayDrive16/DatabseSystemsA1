@@ -1,3 +1,5 @@
+import java.sql.Date;
+import java.time.LocalDate;
 
 public class Util {
  
@@ -21,4 +23,24 @@ public class Util {
 	         (byte) value
 	     };
 	 }
+	 
+	 public static LocalDate toLocDate(Date date) {
+			if(date == null) {
+				return null;
+			} else {
+				return date.toLocalDate();
+			}
+		}
+	 
+	 public static boolean isInteger(String s) {
+	        try { 
+	            Integer.parseInt(s); 
+	        } catch(NumberFormatException e) { 
+	            return false; 
+	        } catch(NullPointerException e) {
+	            return false;
+	        }
+	        // only got here if we didn't return false
+	        return true;
+	    }
 }

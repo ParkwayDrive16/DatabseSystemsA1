@@ -102,8 +102,8 @@ public class businessRecord {
 		canDateSt = (canDate == null) ? "" : canDate.toString();
 		renewDateSt = (renewDate == null) ? "" : renewDate.toString();
 		
-		System.out.println(id + "\t" + name + "\t" + "\t" + status + "\t" + regDateSt + "\t" + canDateSt + "\t" +
-				renewDateSt + "\t" + stateNum + "\t" + regState + "\t" + abn);
+		System.out.println(id + "   " + name + "   " + status + "   " + regDateSt + "   " + canDateSt + "   " +
+				renewDateSt + "   " + stateNum + "   " + regState + "   " + abn);
 	}
 	
 }
