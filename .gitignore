@@ -1,3 +1,5 @@
 **/*.csv
 **/*.log
 **/heap.*
+**/*.zip
+**/gitlog.txt
