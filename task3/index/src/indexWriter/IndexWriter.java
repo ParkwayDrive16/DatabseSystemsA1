@@ -37,6 +37,7 @@ public class IndexWriter {
     FileInputStream heap = new FileInputStream(inputFile);
     int pagePointer;
     int pageCounter = 0;
+    int heapOffSet;
     byte[] page = new byte[pageSize];
     
     while (heap.read(page) > 0) {
@@ -45,9 +46,9 @@ public class IndexWriter {
       int recordsCount = ByteUtil.toInt(Arrays.copyOfRange(page, pageSize-4, pageSize));
       for (int i = 0; i < recordsCount; i++) {
         
+        heapOffSet = pageCounter * pageSize + pagePointer;
         pagePointer += 4;
         int nameLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += 4));
-        int heapOffSet = pageCounter * pageSize + pagePointer;
         String name = new String(Arrays.copyOfRange(page, pagePointer, pagePointer += nameLength));
         pagePointer += 25;
         int stateNumLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += 4));
@@ -88,9 +89,6 @@ public class IndexWriter {
       }
     }
     
-    
-
-
   }
 
 }
