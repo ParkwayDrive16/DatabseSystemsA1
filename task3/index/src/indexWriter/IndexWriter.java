@@ -46,9 +46,9 @@ public class IndexWriter {
       int recordsCount = ByteUtil.toInt(Arrays.copyOfRange(page, pageSize-4, pageSize));
       for (int i = 0; i < recordsCount; i++) {
         
-        heapOffSet = pageCounter * pageSize + pagePointer;
         pagePointer += 4;
         int nameLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += 4));
+        heapOffSet = pageCounter * pageSize + pagePointer;
         String name = new String(Arrays.copyOfRange(page, pagePointer, pagePointer += nameLength));
         pagePointer += 25;
         int stateNumLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += 4));
