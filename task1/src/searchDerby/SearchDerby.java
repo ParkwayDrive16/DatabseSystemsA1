@@ -76,11 +76,8 @@ public class SearchDerby
           int id = results.getInt(1);
           String name = results.getString(2);
           String status = results.getString(3);
-          
           String regDate = ((results.getDate(4) == null) ? "" : results.getDate(4).toString());
-          
           String canDate = ((results.getDate(5) == null) ? "" : results.getDate(4).toString());
-
           String renDate = ((results.getDate(6) == null) ? "" : results.getDate(4).toString());
           String stateNumber = results.getString(7);
           String state = results.getString(8);
