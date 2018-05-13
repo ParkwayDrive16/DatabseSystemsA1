@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 
-public class MyApp
+public class ImportDerby
 {
 	private static String driver = "org.apache.derby.jdbc.ClientDriver";
 	private static String dbName = "MyDB";
@@ -80,14 +80,12 @@ public class MyApp
 	    	if (globalCounter % 100 == 0 )
 	    	{
 	    		commandForBusiness.setLength(commandForBusiness.length() - 1);
-//	    		System.out.println(commandForBusiness.toString());
 	    		sendToDatabase(commandForBusiness.toString());	    		
 	    		commandForBusiness.setLength(0);
 	    		commandForBusiness.append(initialUpdateBN);
 	    		if (abnCounter != 0) {
 	    			commandForABN.setLength(commandForABN.length() - 1);
 	    			sendToDatabase(commandForABN.toString());
-//	    			System.out.println(commandForABN.toString());
 	    			commandForABN.setLength(0);
 		    		commandForABN.append(initialUpdateABN);
 		    		abnCounter = 0;
@@ -103,11 +101,9 @@ public class MyApp
 	    if (globalCounter % 100 != 0)
 	    {
 	    	commandForBusiness.setLength(commandForBusiness.length() - 1);
-//	    	System.out.println(commandForBusiness);
 		    sendToDatabase(commandForBusiness.toString());
 	    	if (abnCounter != 0) {
 	    		commandForABN.setLength(commandForABN.length() - 1);
-//		    	System.out.println(commandForABN.toString());
 			    sendToDatabase(commandForABN.toString());
 	    	}
 	    }
