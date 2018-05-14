@@ -1,10 +1,10 @@
 **/*.csv
 **/*.log
 **/heap.*
+**/index.*
 **/*.zip
 **/gitlog.txt
 
 **/MyDB
 **/MyDB152
 **/MyDB50k
-task3/indexFile

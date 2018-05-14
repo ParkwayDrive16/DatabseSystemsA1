@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.sql.Date;
 
-public class dbquery 
+public class DBquery 
 {
 
   public static void main(String[] args) throws IOException 
@@ -66,7 +66,7 @@ public class dbquery
         
         //if name field contains the string we're looking for - create businessRecord class object
         if((name.toLowerCase()).contains(stringToFind.toLowerCase())) {
-          businessRecord record = new businessRecord(id, name, status, Util.toLocDate(regDate), 
+          BusinessRecord record = new BusinessRecord(id, name, status, Util.toLocDate(regDate), 
               Util.toLocDate(canDate), Util.toLocDate(renewDate), stateNum, state, abn);
         //printing matched record
         record.printInfo();
@@ -79,8 +79,6 @@ public class dbquery
     heap.close();
     //records the end time of the app and prints in milliseconds
     long end = System.currentTimeMillis();
-      System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
+    System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
   }
-
-
 }

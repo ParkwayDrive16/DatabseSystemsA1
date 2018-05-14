@@ -1,5 +1,8 @@
 package util;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 public class Util {
  
    public static final byte[] intToByteArray(int value) {
@@ -56,6 +59,14 @@ public class Util {
        }
 
        return result;
+   }
+   
+   public static LocalDate toLocDate(Date date) {
+     if(date == null) {
+       return null;
+     } else {
+       return date.toLocalDate();
+     }
    }
    
 }

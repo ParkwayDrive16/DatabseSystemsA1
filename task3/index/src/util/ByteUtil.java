@@ -1,6 +1,7 @@
 package util;
 
 import java.nio.ByteBuffer;
+import java.sql.Date;
 
 public class ByteUtil {
   
@@ -19,5 +20,23 @@ public class ByteUtil {
   public static long toLong(byte[] bytes)
   {
       return ByteBuffer.wrap(bytes).getLong();
+  }
+  
+  public static String toStatus(byte[] bytes) {
+    if(ToHex(bytes) == "00") {
+      return "Deregistered";
+    } else {
+      return "Registered";
+    }
+  }
+  
+  public static Date toDate(byte[] bytes)
+  {
+      long epoch = ByteBuffer.wrap(bytes).getLong();
+      if (epoch == 0)
+      {
+          return null;
+      }
+      return new Date(epoch);
   }
 }

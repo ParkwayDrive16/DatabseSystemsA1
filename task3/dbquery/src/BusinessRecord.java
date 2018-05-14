@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 
-public class businessRecord {
+public class BusinessRecord {
 	private int id;
 	private String name;
 	private String status;
@@ -11,7 +11,7 @@ public class businessRecord {
 	private String regState;
 	private String abn;
 	
-	public businessRecord(int id, String name, String status, LocalDate regDate, 
+	public BusinessRecord(int id, String name, String status, LocalDate regDate, 
 			LocalDate canDate, LocalDate renewDate, String stateNum, String regState, String abn){
 		this.id = id;
 		this.name = name;
