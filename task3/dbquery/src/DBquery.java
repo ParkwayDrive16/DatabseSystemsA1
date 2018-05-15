@@ -79,6 +79,6 @@ public class DBquery
     heap.close();
     //records the end time of the app and prints in milliseconds
     long end = System.currentTimeMillis();
-    System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
+    System.out.print("\nExecution time: " + (end - start) + " milliseconds.\n");
   }
 }

@@ -80,7 +80,7 @@ public class IndexReader {
     long end = System.currentTimeMillis();
     //printing result count and time taken
     System.out.println("Matches: " + resultCount);
-    System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
+    System.out.print("\nExecution time: " + (end - start) + " milliseconds.\n");
     //closing heap and index files
     heapFile.close();
     indexFile.close();

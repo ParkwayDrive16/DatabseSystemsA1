@@ -82,7 +82,7 @@ public class IndexWriter {
     }
     //stamp of current time when finished processing
     long end = System.currentTimeMillis();
-    System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
+    System.out.print("\nExecution time: " + (end - start) + " milliseconds.\n");
     //closing heap and index files
     heap.close();
     file.close();
