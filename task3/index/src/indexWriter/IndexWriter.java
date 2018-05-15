@@ -46,14 +46,18 @@ public class IndexWriter {
     int pageCounter = 0;
     int heapOffSet;
     byte[] page = new byte[pageSize];
-    
+    //stamp of current time to measure performance
     long start = System.currentTimeMillis();
+    //loop while there's pages in the heap file
     while (heap.read(page) > 0) {
+      //reseting page pointer in every loop
       pagePointer = 0;
-      
+      //retrieving number of records from the end of the page
       int recordsCount = ByteUtil.toInt(Arrays.copyOfRange(page, pageSize-4, pageSize));
+      //enter the loop that runs recordsCount times
       for (int i = 0; i < recordsCount; i++) {
-        
+        //reading and storing only the name of the business
+        //saving offset in the heap file for every business name
         pagePointer += SKIP_TO_NAME;
         int nameLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += INT_SIZE));
         heapOffSet = pageCounter * pageSize + pagePointer;
@@ -64,28 +68,37 @@ public class IndexWriter {
         pagePointer += SKIP_TO_ABNLENGTH;
         int abnLength = ByteUtil.toInt(Arrays.copyOfRange(page, pagePointer, pagePointer += INT_SIZE));
         pagePointer += abnLength;
-        
+        //getting hash of the name
         int hashName = name.hashCode();
+        //calculating position in the idex file
         int id = (int)(Integer.toUnsignedLong(hashName) % INDEX_FILE_SIZE);
-        
+        //concatenating id and position in heap file into 8 bytes
         byte[] result = Util.concat(Util.intToByteArray(id),Util.intToByteArray(heapOffSet));
+        //writing to the index file
         writeToFile(result, id*SINGLE_RECORD_SIZE);
       }
+      //incrementing current page counter
       pageCounter ++;
     }
+    //stamp of current time when finished processing
     long end = System.currentTimeMillis();
     System.out.print("\nExecution time: " + (end - start) + " milliseconds.");
+    //closing heap and index files
     heap.close();
     file.close();
   }
   
   private static void writeToFile(byte[] data, int position) throws IOException {
+    //changing the pointer in index file to particular position
     file.seek(position);
+    //loop of line probing
     while(true) {
       byte[] bytes = new byte[8];
+      //reading 8 bytes to see if they are empty
       file.read(bytes);
-      
+      //covert to long and check against 0
       if(ByteUtil.toLong(bytes) == 0 ) {
+        //if free then come back 8 bytes and write the data
         file.seek(file.getFilePointer() - SINGLE_RECORD_SIZE);
         file.write(data);
         break;
