@@ -46,7 +46,6 @@ public class Util {
        {
            totalLength += arrays[i].length;
        }
-
        // create the result array
        byte[] result = new byte[totalLength];
 
